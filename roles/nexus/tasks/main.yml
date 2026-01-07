@@ -1,0 +1,59 @@
+---
+- name: Create Nexus directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "200"
+    group: "200"
+    mode: '0755'
+  loop:
+    - /opt/nexus
+    - /opt/nexus/data
+
+- name: Deploy Nexus container
+  community.docker.docker_container:
+    name: nexus
+    image: sonatype/nexus3:latest
+    state: started
+    restart_policy: unless-stopped
+    ports:
+      - "8081:8081"
+    volumes:
+      - /opt/nexus/data:/nexus-data
+    env:
+      INSTALL4J_ADD_VM_PARAMS: "-Xms2g -Xmx2g -XX:MaxDirectMemorySize=2g"
+
+- name: Wait for Nexus to start
+  wait_for:
+    port: 8081
+    delay: 30
+    timeout: 600
+
+- name: Create Nginx configuration for Nexus
+  template:
+    src: nexus.conf.j2
+    dest: /etc/nginx/sites-available/nexus
+    mode: '0644'
+  notify: reload nginx
+
+- name: Enable Nexus Nginx site
+  file:
+    src: /etc/nginx/sites-available/nexus
+    dest: /etc/nginx/sites-enabled/nexus
+    state: link
+  notify: reload nginx
+
+- name: Get Nexus admin password file
+  command: docker exec nexus cat /nexus-data/admin.password
+  register: nexus_password
+  changed_when: false
+  ignore_errors: true
+
+- name: Display Nexus initial password
+  debug:
+    msg: "Nexus initial admin password: {{ nexus_password.stdout }}"
+  when: nexus_password.stdout is defined and nexus_password.stdout != ""
+
+- name: Display Nexus access URL
+  debug:
+    msg: "Nexus is available at: https://{{ nexus_domain }}"

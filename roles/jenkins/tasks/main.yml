@@ -1,0 +1,55 @@
+---
+- name: Create Jenkins directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "1000"
+    group: "1000"
+    mode: '0755'
+  loop:
+    - /opt/jenkins
+    - /opt/jenkins/data
+
+- name: Deploy Jenkins container
+  community.docker.docker_container:
+    name: jenkins
+    image: jenkins/jenkins:lts
+    state: started
+    restart_policy: unless-stopped
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    volumes:
+      - /opt/jenkins/data:/var/jenkins_home
+  
+
+- name: Wait for Jenkins to start
+  wait_for:
+    port: 8080
+    delay: 10
+    timeout: 300
+
+- name: Create Nginx configuration for Jenkins
+  template:
+    src: jenkins.conf.j2
+    dest: /etc/nginx/sites-available/jenkins
+    mode: '0644'
+  notify: reload nginx
+
+- name: Enable Jenkins Nginx site
+  file:
+    src: /etc/nginx/sites-available/jenkins
+    dest: /etc/nginx/sites-enabled/jenkins
+    state: link
+  notify: reload nginx
+
+- name: Get Jenkins initial admin password
+  command: docker exec jenkins cat /var/jenkins_home/secrets/initialAdminPassword
+  register: jenkins_password
+  changed_when: false
+  ignore_errors: true
+
+- name: Display Jenkins initial password
+  debug:
+    msg: "Jenkins initial admin password: {{ jenkins_password.stdout }}"
+  when: jenkins_password.stdout is defined

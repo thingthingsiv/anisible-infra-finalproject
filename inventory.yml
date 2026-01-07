@@ -1,0 +1,12 @@
+all:
+  hosts:
+    machine01:
+      ansible_host: 192.168.64.9
+      ansible_user: ubuntu
+    machine02:
+      ansible_host: 192.168.64.6
+      ansible_user: ubuntu
+    machine03:
+      ansible_host: 192.168.64.7
+      ansible_user: ubuntu
+  

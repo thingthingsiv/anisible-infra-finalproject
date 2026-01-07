@@ -1,0 +1,30 @@
+- hosts: all
+  become: true
+  roles:
+    - common
+    - docker
+    - ohmyzsh
+    - portainer
+
+- hosts: machine01
+  become: true
+  roles:
+    - glab
+    - nginx_certbot
+    - jenkins
+    - sonarqube
+    - nexus
+
+- hosts: machine02
+  become: true
+  roles:
+    - ohmyzsh
+    - portainer
+
+- hosts: machine03
+  become: true
+  roles:
+    - ohmyzsh
+    - portainer
+    - repository
+    - helm_repo

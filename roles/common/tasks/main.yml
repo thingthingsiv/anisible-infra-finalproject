@@ -1,0 +1,32 @@
+---
+- name: Kill any running apt processes
+  shell: pkill -9 apt-get || true
+  changed_when: false
+  become: true
+
+- name: Remove apt lock file if it exists
+  file:
+    path: /var/lib/apt/lists/lock
+    state: absent
+  become: true
+  ignore_errors: true
+
+- name: Update and upgrade apt
+  apt:
+    update_cache: yes
+    upgrade: dist
+    force_apt_get: yes
+
+- name: Install basic tools
+  apt:
+    name:
+      - git
+      - curl
+      - wget
+      - unzip
+      - software-properties-common
+      - apt-transport-https
+      - ca-certificates
+      - gnupg
+      - lsb-release
+    state: present

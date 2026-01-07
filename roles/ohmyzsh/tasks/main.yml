@@ -1,0 +1,10 @@
+- name: Install zsh
+  apt:
+    name: zsh
+    state: present
+
+- name: Install Oh My Zsh
+  ansible.builtin.shell: >
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+  args:
+    creates: /root/.oh-my-zsh

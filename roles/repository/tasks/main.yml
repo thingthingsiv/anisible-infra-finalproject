@@ -1,0 +1,17 @@
+---
+# Ensure Docker registry is running
+- name: Start Docker Registry container
+  community.docker.docker_container:
+    name: registry
+    image: registry:2
+    state: started
+    restart_policy: always
+    published_ports:
+      - "5000:5000"
+
+# Ensure Helm repository directory exists
+- name: Create Helm repository directory
+  ansible.builtin.file:
+    path: /opt/helm-repo
+    state: directory
+    mode: '0755'

@@ -1,0 +1,28 @@
+- hosts: all
+  become: true
+  tasks:
+    - name: Stop and remove all Docker containers
+      docker_container:
+        name: all
+        state: absent
+        force_kill: yes
+
+    - name: Remove Docker volumes
+      docker_volume:
+        name: all
+        state: absent
+
+    - name: Remove installed packages
+      apt:
+        name:
+          - docker.io
+          - docker-compose
+          - zsh
+          - nginx
+        state: absent
+        purge: yes
+
+    - name: Remove Oh My Zsh
+      file:
+        path: /home/{{ ansible_user }}/.oh-my-zsh
+        state: absent

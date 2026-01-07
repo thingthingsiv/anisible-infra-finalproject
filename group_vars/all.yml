@@ -1,0 +1,6 @@
+docker_users:
+  - "{{ ansible_user }}"
+
+jenkins_domain: jenkin.sivthingthing.xyz
+sonarqube_domain: sonarqube.sivthingthing.xyz
+nexus_domain: nexus.sivthingthing.xyz
