@@ -69,22 +69,18 @@ ansible-playbook playbooks/setup.yml
 
 ### Jenkins
 - **Port**: 8080
-- **URL**: http://jenkin.sivthingthing.xyz or http://localhost:8080
 - **Purpose**: CI/CD automation
 
 ### SonarQube
 - **Port**: 9001
-- **URL**: http://sonarqube.sivthingthing.xyz or http://localhost:9001
 - **Purpose**: Code quality and security analysis
 
 ### Nexus
 - **Port**: 8081
-- **URL**: http://nexus.sivthingthing.xyz or http://localhost:8081
 - **Purpose**: Artifact and package repository management
 
 ### Portainer
 - **Port**: 9000
-- **URL**: http://portainer.sivthingthing.xyz:9000 or http://localhost:9000
 - **Purpose**: Docker container management UI
 
 ### GitLab
